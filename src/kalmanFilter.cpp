@@ -1,14 +1,13 @@
 #include "kalmanFilter.hpp"
 #include "constants.hpp"
+#include "rangeSensor.hpp"
 
-KalmanFilter::KalmanFilter(Eigen::MatrixXd& trans_matrix, Eigen::MatrixXd& noise_matrix):
-    transition_matrix(trans_matrix), 
-    process_noise_matrix(noise_matrix){
+KalmanFilter::KalmanFilter(){
         states_len = 4;
         states.resize(states_len);
         state_inited = false;
         process_noise_matrix = Eigen::MatrixXd::Zero(4, 4);
-        trans_matrix << 1, 0, 1, 0,
+        transition_matrix << 1, 0, 1, 0,
                         0, 1, 0, 1,
                         0, 0, 1, 0,
                         0, 0, 0, 1;
@@ -16,7 +15,13 @@ KalmanFilter::KalmanFilter(Eigen::MatrixXd& trans_matrix, Eigen::MatrixXd& noise
 
 
 void KalmanFilter::sensors_init() {
-    
+    // use constant.hpp to create sensor
+    Eigen::MatrixXd noise_matrix(3,3);
+    noise_matrix << RANGE_SENSOR_NOISE, 0, 0,
+                    0, RANGE_SENSOR_NOISE, 0,
+                    0, 0, RANGE_SENSOR_NOISE;
+    std::shared_ptr<Sensor> range_sensor = std::make_shared<RangeSensor>(noise_matrix);
+    sensors.push_back(range_sensor);
 }
 
 // Do initialization
@@ -24,7 +29,7 @@ void KalmanFilter::init() {
     sensors_init();
     for(int i = 0; i < sensors.size(); ++i){
         if(!state_inited && sensors[i]->ifSensorUpdated()){
-            states = sensors[i]->getMeasurement();
+            states = sensors[i]->measurementToState();
             prev_time = std::chrono::steady_clock::now();
             state_inited = true;
             break;
@@ -79,4 +84,12 @@ void KalmanFilter::update(){
             cov_matrix = (I - k_gain * h_matrix) * cov_matrix;
         }
     }
+}
+
+Eigen::VectorXd KalmanFilter::getState(){
+    return states;
+}
+
+Eigen::MatrixXd KalmanFilter::getCovMatrix(){
+    return cov_matrix;
 }

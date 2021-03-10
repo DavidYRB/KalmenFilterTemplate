@@ -9,6 +9,8 @@ public:
     virtual void sensors_init() = 0;
     virtual void update() = 0;
     virtual void predict() = 0;
+    virtual Eigen::VectorXd getState() = 0;
+    virtual Eigen::MatrixXd getCovMatrix() = 0;
     virtual ~Filter(){}
 };
 

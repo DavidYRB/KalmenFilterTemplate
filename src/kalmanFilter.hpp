@@ -20,10 +20,12 @@ private:
     Eigen::MatrixXd process_noise_matrix;
 
 public:
-    KalmanFilter(Eigen::MatrixXd& trans_matrix, Eigen::MatrixXd& noise_matrix){};
+    KalmanFilter(){};
     void updateProcessCovMatrix(double del_t){};
     virtual void init() override{};
     virtual void sensors_init() override{};
     virtual void update() override{};
     virtual void predict() override{};
+    virtual Eigen::VectorXd getState(){};
+    virtual Eigen::MatrixXd getCovMatrix(){};
 };
