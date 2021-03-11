@@ -1,6 +1,6 @@
 #ifndef FILTER_H_
 #define FILTER_H_
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 class Filter
 {
