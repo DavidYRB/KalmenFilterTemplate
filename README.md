@@ -8,4 +8,13 @@ kalmanFilter.cpp is the class implementing filter interface, with px, py, vx, vy
 
 rangeSensor.cpp is the class implementing sensor interface, with range, theta, range_rate as measurement 
 
+## How to build
+The CmakeList.txt is the instruction, follow normal cmake process will generate executable. Steps as follows
+```
+//under the source root
+mkdir build && cd build
+cmake ..
+make
+```
 
+In the build folder there will be an executable KalmanFilterTemplate
